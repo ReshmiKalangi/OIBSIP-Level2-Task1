@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('c.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 320px;
+        }
+
+        .heading {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #000; /* Black color */
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .display, .history {
+            background: #99c2ff; /* Whale blue */
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: right;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            overflow: hidden;
+            word-wrap: break-word;
+        }
+
+        .history {
+            font-size: 1em;
+            height: 80px;
+            overflow-y: auto;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .button {
+            background: #eee;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .button.operator {
+            background: #99c2ff; /* Whale blue */
+            color: #fff;
+        }
+
+        .button.operator:hover {
+            background: #80b3ff; /* Slightly darker whale blue */
+        }
+
+        .button:hover {
+            background: #ddd;
+        }
+
+        .button:active {
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="heading"> Calculator</div>
+        <div class="display" id="display">0</div>
+        <div class="history" id="history">History:</div>
+        <div class="buttons">
+            <div class="button" onclick="clearDisplay()">C</div>
+            <div class="button operator" onclick="setOperation('/')">/</div>
+            <div class="button operator" onclick="setOperation('*')">*</div>
+            <div class="button operator" onclick="setOperation('-')">-</div>
+
+            <div class="button" onclick="appendNumber('7')">7</div>
+            <div class="button" onclick="appendNumber('8')">8</div>
+            <div class="button" onclick="appendNumber('9')">9</div>
+            <div class="button operator" onclick="setOperation('+')">+</div>
+
+            <div class="button" onclick="appendNumber('4')">4</div>
+            <div class="button" onclick="appendNumber('5')">5</div>
+            <div class="button" onclick="appendNumber('6')">6</div>
+            <div class="button operator" onclick="calculateResult()">=</div>
+
+            <div class="button" onclick="appendNumber('1')">1</div>
+            <div class="button" onclick="appendNumber('2')">2</div>
+            <div class="button" onclick="appendNumber('3')">3</div>
+            <div class="button" onclick="appendNumber('0')">0</div>
+        </div>
+    </div>
+
+    <script>
+        let currentOperation = null;
+        let firstNumber = '';
+        let secondNumber = '';
+        let operator = '';
+
+        function appendNumber(number) {
+            const display = document.getElementById('display');
+            if (currentOperation === null) {
+                firstNumber += number;
+                display.textContent = firstNumber;
+            } else {
+                secondNumber += number;
+                display.textContent = secondNumber;
+            }
+        }
+
+        function setOperation(op) {
+            if (firstNumber === '') return;
+            if (currentOperation !== null) calculateResult();
+            currentOperation = op;
+            operator = op;
+        }
+
+        function calculateResult() {
+            if (firstNumber === '' || secondNumber === '' || currentOperation === null) return;
+
+            let result;
+            const num1 = parseFloat(firstNumber);
+            const num2 = parseFloat(secondNumber);
+
+            switch (currentOperation) {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    result = num1 / num2;
+                    break;
+            }
+
+            document.getElementById('display').textContent = result;
+            appendHistory(`${firstNumber} ${operator} ${secondNumber} = ${result}`);
+            firstNumber = result;
+            secondNumber = '';
+            currentOperation = null;
+        }
+
+        function appendHistory(entry) {
+            const history = document.getElementById('history');
+            history.textContent = history.textContent + '\n' + entry;
+            history.scrollTop = history.scrollHeight; // Auto scroll to the bottom
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').textContent = '0';
+            document.getElementById('history').textContent = 'History:';
+            firstNumber = '';
+            secondNumber = '';
+            currentOperation = null;
+        }
+    </script>
+</body>
+</html>
